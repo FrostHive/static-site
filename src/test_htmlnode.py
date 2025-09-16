@@ -4,7 +4,6 @@ from htmlnode import HTMLNode, LeafNode, ParentNode
 class TestHTMLNode(unittest.TestCase):
     def test_only_tag(self):
         node = HTMLNode(tag="Test tag")
-        print(node)
         only_has_tag = not (node.value and node.children and node.props)
         self.assertTrue(only_has_tag)
 
