@@ -21,15 +21,14 @@ def transfer_files_to_public():
 
 def transfer_file(file, current_path, old_path):
     new_path = os.path.join(current_path, file)
-    if os.path.isfile(file):
+    old_directory = os.path.join(old_path, file)
+    if os.path.isfile(old_directory):
         print(f"New file for {current_path}: {file}")
-        shutil.copy(file, current_path)
+        shutil.copy(old_directory, current_path)
     else:
-        new_path = os.path.join(current_path, file)
-        old_directory = os.path.join(old_path, file)
         os.mkdir(new_path)
         print(f"New directory made: {new_path}")
-        for item in os.listdir(new_path):
+        for item in os.listdir(old_directory):
             transfer_file(item, new_path, old_directory)
     return
 
