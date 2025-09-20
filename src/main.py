@@ -1,8 +1,11 @@
 import os
 import shutil
+from generate_page import generate_page
 
 def main():
     transfer_files_to_public()
+    generate_page("./content/index.md", "./template.html", "./public/index.html")
+
 
 def transfer_files_to_public():
     public_path = os.path.abspath("./public")

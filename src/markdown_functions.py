@@ -33,7 +33,7 @@ def block_to_block_type(markdown_block: str) -> BlockType:
 
     is_quote_block = True
     for line in markdown_lines:
-        if not line.startswith("> "):
+        if not line.startswith(">"):
             is_quote_block = False
             break
     if is_quote_block:

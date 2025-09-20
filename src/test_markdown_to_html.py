@@ -1,5 +1,5 @@
 import unittest
-from markdown_to_html import markdown_to_html_node
+from markdown_to_html import markdown_to_html_node, extract_title
 
 class TestMarkdownToHTML(unittest.TestCase):
     def test_paragraphs(self):
@@ -52,13 +52,21 @@ the **same** even with inline stuff
     def test_blockquote(self):
         md = """
 > This is a blockquote
-> with _italic_ and **bold** inside"""
+> with _italic_ and **bold** inside
+"""
         node = markdown_to_html_node(md)
         html = node.to_html()
         self.assertEqual(
             html,
             "<div><blockquote>This is a blockquote with <i>italic</i> and <b>bold</b> inside</blockquote></div>"
         )
+
+    def test_blockquote_2(self):
+        md = """
+> "I am in fact a Hobbit in all but size."
+>
+> -- J.R.R. Tolkien
+"""
 
     def test_unordered_list(self):
         md = """
@@ -122,3 +130,51 @@ Some intro text.
             "</ul>"
             "</div>"
         )
+
+class TestExtractTitle(unittest.TestCase):
+    def test_valid_title_first_line(self):
+        md = "# My Document Title\nSome text below"
+        result = extract_title(md)
+        self.assertEqual(result, "My Document Title")
+
+    def test_valid_title_with_leading_whitespace(self):
+        md = "   #    Indented Title\nMore content"
+        result = extract_title(md)
+        self.assertEqual(result, "Indented Title")
+
+    def test_valid_title_not_first_line(self):
+        md = """
+Some intro text here
+
+# Actual Title
+
+And some more content
+"""
+        result = extract_title(md)
+        self.assertEqual(result, "Actual Title")
+
+    def test_no_title_raises_exception(self):
+        md = """
+## Subtitle Only
+
+Some paragraph
+
+### Even smaller title
+"""
+        with self.assertRaises(Exception) as context:
+            extract_title(md)
+        self.assertEqual(str(context.exception), "No h1 header line.")
+
+    def test_empty_string_raises_exception(self):
+        md = ""
+        with self.assertRaises(Exception):
+            extract_title(md)
+
+    def test_title_with_extra_hashes(self):
+        md = """
+### Not a match
+# Valid Title Here
+## Another one
+"""
+        result = extract_title(md)
+        self.assertEqual(result, "Valid Title Here")

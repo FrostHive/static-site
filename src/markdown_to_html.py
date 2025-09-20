@@ -5,11 +5,24 @@ from text_functions import text_to_textnodes
 from textnode import TextNode, TextType, text_node_to_html_node
 
 def markdown_to_html_node(markdown: str):
-    # Separate each block into a list
     markdown_blocks = markdown_to_blocks(markdown)
     block_nodes = blocks_to_html_nodes(markdown_blocks)
     root_node = ParentNode("div", block_nodes)
     return root_node
+
+def extract_title(markdown: str):
+    markdown_lines = markdown.splitlines()
+    header_line = ""
+
+    for line in markdown_lines:
+        if line.lstrip().startswith("# "):
+            header_line = line.strip()
+            break
+
+    if header_line == "":
+        raise Exception("No h1 header line.")
+
+    return header_line.lstrip("# ")
 
 def blocks_to_html_nodes(block_list: list[str]):
     list_of_html_nodes = []
@@ -65,6 +78,7 @@ def code_to_html_node(block: str) -> HTMLNode:
 def quote_to_html_node(block: str) -> HTMLNode:
     children_nodes = text_to_children_nodes(block, BlockType.QUOTE)
     parent_node = ParentNode("blockquote", children_nodes)
+    print(parent_node)
     return parent_node
 
 def u_list_to_html_node(block: str) -> HTMLNode:
@@ -79,7 +93,6 @@ def o_list_to_html_node(block: str) -> HTMLNode:
     parent_node = ParentNode("ol", children_nodes)
     return parent_node
 
-
 def text_to_children_nodes(block: str, block_type:BlockType) -> list[HTMLNode]:
     children_nodes = []
 
@@ -89,6 +102,7 @@ def text_to_children_nodes(block: str, block_type:BlockType) -> list[HTMLNode]:
         case BlockType.QUOTE:
             cleaned_lines = [line.strip()[2:] for line in lines]
             clean_nodes = lines_to_inline_nodes(cleaned_lines)
+            print(clean_nodes)
             children_nodes.extend(clean_nodes)
         case BlockType.UNORDERED_LIST:
             for x, line in enumerate(lines):
