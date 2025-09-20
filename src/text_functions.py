@@ -10,25 +10,35 @@ def text_to_textnodes(text:str):
     new_nodes = split_nodes_link(new_nodes)
     return new_nodes
 
-
-
 def split_nodes_delimiter(old_nodes:list[TextNode], delimiter: str, text_type: TextType):
     new_nodes = []
     for node in old_nodes:
         if node.text_type == TextType.PLAIN_TEXT:
-            if node.text.count(delimiter) % 2 == 0 and node.text.count(delimiter) >= 2:
-                    text_list = node.text.split(delimiter, 2)
-                    new_node1 = TextNode(text_list[0], TextType.PLAIN_TEXT)
-                    new_node2 = TextNode(text_list[1], text_type)
-                    new_node3 = TextNode("".join(text_list[2:]), TextType.PLAIN_TEXT)
-                    for new_node in [new_node1, new_node2, new_node3]:
-                        if new_node.text != "":
-                            new_nodes.append(new_node)
-
-            else:
-                new_nodes.append(node)
+            split_nodes = split_nodes_delimiter_helper(node, delimiter, text_type)
+            new_nodes.extend(split_nodes)
         else:
             new_nodes.append(node)
+    return new_nodes
+
+def split_nodes_delimiter_helper(old_node, delimiter, text_type):
+    new_nodes = []
+    has_delimiter = old_node.text.count(delimiter) % 2 == 0 and old_node.text.count(delimiter) >= 2
+    if has_delimiter:
+        text_list = old_node.text.split(delimiter, 2)
+        new_node1 = TextNode(text_list[0], TextType.PLAIN_TEXT)
+        new_node2 = TextNode(text_list[1], text_type)
+        new_node3 = TextNode("".join(text_list[2:]), TextType.PLAIN_TEXT)
+        for new_node in [new_node1, new_node2]:
+            if new_node.text != "":
+                new_nodes.append(new_node)
+        if new_node3.text != "":
+            if new_node3.text.count(delimiter) >= 2:
+                new_nodes.extend(split_nodes_delimiter_helper(new_node3, delimiter, text_type))
+            else:
+                new_nodes.append(new_node3)
+    else:
+        new_nodes.append(old_node)
+
     return new_nodes
 
 def split_nodes_link(old_nodes:list[TextNode]):

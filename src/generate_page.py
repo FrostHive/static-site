@@ -21,11 +21,20 @@ def generate_page(from_path: str, template_path, dest_path: str):
     complete_text = template_text.replace("{{ Title }}", html_title).replace("{{ Content }}", converted_text)
 
     full_path = os.path.abspath(dest_path)
-
     if not os.path.exists(os.path.dirname(full_path)):
         os.makedirs(os.path.dirname(full_path))
-
 
     print (f"Opening {full_path} to write in.")
     with open(full_path, 'w') as final_file:
         final_file.write(complete_text)
+
+def generate_pages_recursive(dir_path_content: str, template_path: str, dest_dir_path: str):
+    for item in os.listdir(dir_path_content):
+        original_path = os.path.join(dir_path_content, item)
+        new_destination = os.path.join(dest_dir_path, f"{item[:-2]}html")
+        if os.path.isfile(original_path) and item.endswith(".md"):
+            print(f"Found file: {item}")
+            generate_page(original_path, template_path, new_destination)
+        if os.path.isdir(original_path):
+            print(f"Found directory: {item}")
+            generate_pages_recursive(original_path, template_path, os.path.join(dest_dir_path, item))
