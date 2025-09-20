@@ -1,25 +1,31 @@
 import os
 import shutil
+import sys
 from generate_page import generate_pages_recursive
 
+
+
 def main():
-    transfer_files_to_public()
-    generate_pages_recursive("./content", "./template.html", "./public")
+    base_path = "/"
+    if len(sys.argv) >= 2:
+        base_path = sys.argv[1]
+    transfer_files_to_public(base_path)
+    generate_pages_recursive(f"{base_path}content", f"{base_path}template.html", f"{base_path}docs", base_path)
 
 
-def transfer_files_to_public():
-    public_path = os.path.abspath("./public")
-    static_path = os.path.abspath("./static")
+def transfer_files_to_public(path):
+    docs_path = os.path.abspath(f"{path}docs")
+    static_path = os.path.abspath(f"{path}static")
 
-    if os.path.exists(public_path):
-        print(f"{public_path} deleted.")
-        shutil.rmtree(public_path)
+    if os.path.exists(docs_path):
+        print(f"{docs_path} deleted.")
+        shutil.rmtree(docs_path)
 
-    os.mkdir(public_path)
-    print(f"{public_path} created.")
+    os.mkdir(docs_path)
+    print(f"{docs_path} created.")
 
     for item in os.listdir(static_path):
-        transfer_file(item, public_path, static_path)
+        transfer_file(item, docs_path, static_path)
     return
 
 def transfer_file(file, current_path, old_path):

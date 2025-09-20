@@ -78,7 +78,6 @@ def code_to_html_node(block: str) -> HTMLNode:
 def quote_to_html_node(block: str) -> HTMLNode:
     children_nodes = text_to_children_nodes(block, BlockType.QUOTE)
     parent_node = ParentNode("blockquote", children_nodes)
-    print(parent_node)
     return parent_node
 
 def u_list_to_html_node(block: str) -> HTMLNode:
@@ -102,7 +101,6 @@ def text_to_children_nodes(block: str, block_type:BlockType) -> list[HTMLNode]:
         case BlockType.QUOTE:
             cleaned_lines = [line.strip()[2:] for line in lines]
             clean_nodes = lines_to_inline_nodes(cleaned_lines)
-            print(clean_nodes)
             children_nodes.extend(clean_nodes)
         case BlockType.UNORDERED_LIST:
             for x, line in enumerate(lines):
