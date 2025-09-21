@@ -19,8 +19,8 @@ def generate_page(from_path: str, template_path, dest_path: str, base_path: str)
     converted_text = converted_node.to_html()
 
     complete_text = template_text.replace("{{ Title }}", html_title).replace("{{ Content }}", converted_text)
-    complete_text = complete_text.replace("href=\"/", f"href=\"{base_path}").replace("src=\"/", f"src=\"/{base_path}")
-    complete_text = complete_text.replace("href=/", f"href={base_path}").replace("src=/", f"src=/{base_path}")
+    complete_text = complete_text.replace("href=\"/", f"href=\"{base_path}").replace("src=\"/", f"src=\"{base_path}")
+    complete_text = complete_text.replace("href=/", f"href={base_path}").replace("src=/", f"src={base_path}")
 
     full_path = os.path.abspath(dest_path)
     if not os.path.exists(os.path.dirname(full_path)):
