@@ -6,22 +6,28 @@ from generate_page import generate_pages_recursive
 
 
 def main():
-    base_path = "/"
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(sys.argv[0])))
+    url_base_path = "/"
     if len(sys.argv) >= 2:
-        base_path = sys.argv[1]
-    transfer_files_to_public(base_path)
-    generate_pages_recursive(f"{base_path}content", f"{base_path}template.html", f"{base_path}docs", base_path)
+        url_base_path = sys.argv[1]
+    transfer_files_to_public(project_root)
+
+    content_dir = os.path.join(project_root, "content")
+    template_path = os.path.join(project_root, "template.html")
+    output_dir = os.path.join(project_root, "docs")
+    generate_pages_recursive(content_dir, template_path, output_dir, url_base_path)
 
 
 def transfer_files_to_public(path):
-    docs_path = os.path.abspath(f"{path}docs")
-    static_path = os.path.abspath(f"{path}static")
+
+    docs_path = os.path.abspath(os.path.join(path, "docs"))
+    static_path = os.path.abspath(os.path.join(path, "static"))
 
     if os.path.exists(docs_path):
         print(f"{docs_path} deleted.")
         shutil.rmtree(docs_path)
 
-    os.mkdir(docs_path)
+    os.makedirs(docs_path, exist_ok=True)
     print(f"{docs_path} created.")
 
     for item in os.listdir(static_path):
